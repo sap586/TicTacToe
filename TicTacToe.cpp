@@ -1,12 +1,84 @@
 #include <iostream>
+#include <utility>
 #include <stdlib.h>
 using namespace std;
 
-char matrix[3][3] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
-char player = 'X';
+int victoryFlag = 0;
 
-void Draw() {
-//    system("CLS");
+class TicTacToe {
+    public:
+        TicTacToe();
+        pair<int, int> Location;
+        enum Player {NoPlayer=0, Player1, Player2} p;
+        enum Result {NoWin=0, Win, InvalidMove} r;
+        Result MakeMove(Player player, int x, int y);
+        void ResetGame();
+        void ChangePlayer();
+    private:
+        void Draw();
+        char matrix[3][3];
+        void CheckResult(Player p);
+};
+
+void TicTacToe::ResetGame() {
+    matrix[0][0] = '.';
+    matrix[0][1] = '.';
+    matrix[0][2] = '.';
+    matrix[1][0] = '.';
+    matrix[1][1] = '.';
+    matrix[1][2] = '.';
+    matrix[2][0] = '.';
+    matrix[2][1] = '.';
+    matrix[2][2] = '.';
+    Draw();
+    p = Player1;
+    cout<<"Player"<<p<<"'s turn\n";
+}
+
+void TicTacToe::CheckResult(Player p) {
+    if (p == Player1) {
+        if (matrix[0][0] == 'X' && matrix[0][1] == 'X' && matrix[0][2] == 'X' || matrix[1][0] == 'X' && matrix[1][1] == 'X' && matrix[1][2] == 'X' || matrix[2][0] == 'X' && matrix[2][1] == 'X' && matrix[2][2] == 'X' || matrix[0][0] == 'X' && matrix[1][0] == 'X' && matrix[2][0] == 'X' || matrix[0][1] == 'X' && matrix[1][1] == 'X' && matrix[2][1] == 'X' || matrix[0][2] == 'X' && matrix[1][2] == 'X' && matrix[2][2] == 'X' || matrix[0][0] == 'X' && matrix[1][1] == 'X' && matrix[2][2] == 'X' || matrix[2][0] == 'X' && matrix[1][1] == 'X' && matrix[0][2] == 'X') {
+            this->r = Win;
+        }
+    } else {
+        if (matrix[0][0] == 'O' && matrix[0][1] == 'O' && matrix[0][2] == 'O' || matrix[1][0] == 'O' && matrix[1][1] == 'O' && matrix[1][2] == 'O' || matrix[2][0] == 'O' && matrix[2][1] == 'O' && matrix[2][2] == 'O' || matrix[0][0] == 'O' && matrix[1][0] == 'O' && matrix[2][0] == 'O' || matrix[0][1] == 'O' && matrix[1][1] == 'O' && matrix[2][1] == 'O' || matrix[0][2] == 'O' && matrix[1][2] == 'O' && matrix[2][2] == 'O' || matrix[0][0] == 'O' && matrix[1][1] == 'O' && matrix[2][2] == 'O' || matrix[2][0] == 'O' && matrix[1][1] == 'O' && matrix[0][2] == 'O') {
+            this->r = Win;
+        }
+    }
+}
+
+TicTacToe::Result TicTacToe::MakeMove(Player player, int x, int y) {
+    if (matrix[x][y] == '.') {
+        if (this->p == Player1) {
+            matrix[x][y] = 'X';
+        } else {
+            matrix[x][y] = 'O';
+        }
+        Draw();
+        CheckResult(p);
+        if (this->r == Win) {
+            victoryFlag = 1;
+            cout<<"Player"<<this->p<<" Wins\n";
+            return this->r;
+        }
+        ChangePlayer();
+    } else {
+        cout<<"Invalid move, try again.\n";
+        this->r = InvalidMove;
+    }
+    return this->r;
+}
+
+void TicTacToe::ChangePlayer() {
+    if (p == Player1) {
+        p = Player2;
+    } else {
+        p = Player1;
+    }
+    cout<<"Player"<<p<<"'s turn\n";
+}
+
+void TicTacToe::Draw() {
     for (int i=0; i<3; i++) {
         for (int j=0; j<3; j++) {
             cout<<matrix[i][j]<<" ";
@@ -15,155 +87,27 @@ void Draw() {
     }
 }
 
-void changePlayer() {
-    if (player == 'X') {
-        player = 'O';
-    } else {
-        player = 'X';
-    }
+TicTacToe::TicTacToe() {
+    Player p = Player1;
+    Result r = NoWin;
+    ResetGame();
 }
 
-void Input() {
-    int a;
-    cout<<"Enter a number : ";
-    cin>>a;
-    if (a == 1) {
-        if (matrix[0][0] == '1') {
-            matrix[0][0] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 2) {
-        if (matrix[0][1] == '2') {
-            matrix[0][1] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 3) {
-        if (matrix[0][2] == '3') {
-            matrix[0][2] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 4) {
-        if (matrix[1][0] == '4') {
-            matrix[1][0] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 5) {
-        if (matrix[1][1] == '5') {
-            matrix[1][1] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 6) {
-        if (matrix[1][2] == '6') {
-            matrix[1][2] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 7) {
-        if (matrix[2][0] == '7') {
-            matrix[2][0] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 8) {
-        if (matrix[2][1] == '8') {
-            matrix[2][1] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else if (a == 9) {
-        if (matrix[2][2] == '9') {
-            matrix[2][2] = player;
-        } else {
-            cout<<"Invalid Input\n";
-            return;
-        }
-    } else {
-        cout<<"Invalid Input\n";
-        return;
-    }
-    changePlayer();
-}
 
-char Win() {
-    if (matrix[0][0] == 'X' && matrix[0][1] == 'X' && matrix[0][2] == 'X') {
-        return 'X';
-    }
-    if (matrix[1][0] == 'X' && matrix[1][1] == 'X' && matrix[1][2] == 'X') {
-        return 'X';
-    }
-    if (matrix[2][0] == 'X' && matrix[2][1] == 'X' && matrix[2][2] == 'X') {
-        return 'X';
-    }
-    if (matrix[0][0] == 'X' && matrix[1][0] == 'X' && matrix[2][0] == 'X') {
-        return 'X';
-    }
-    if (matrix[0][1] == 'X' && matrix[1][1] == 'X' && matrix[2][1] == 'X') {
-        return 'X';
-    }
-    if (matrix[0][2] == 'X' && matrix[1][2] == 'X' && matrix[2][2] == 'X') {
-        return 'X';
-    }
-    if (matrix[0][0] == 'X' && matrix[1][1] == 'X' && matrix[2][2] == 'X') {
-        return 'X';
-    }
-    if (matrix[2][0] == 'X' && matrix[1][1] == 'X' && matrix[2][2] == 'X') {
-        return 'X';
-    }
-    
-    if (matrix[0][0] == 'O' && matrix[0][1] == 'O' && matrix[0][2] == 'O') {
-        return 'O';
-    }
-    if (matrix[1][0] == 'O' && matrix[1][1] == 'O' && matrix[1][2] == 'O') {
-        return 'O';
-    }
-    if (matrix[2][0] == 'O' && matrix[2][1] == 'O' && matrix[2][2] == 'O') {
-        return 'O';
-    }
-    if (matrix[0][0] == 'O' && matrix[1][0] == 'O' && matrix[2][0] == 'O') {
-        return 'O';
-    }
-    if (matrix[0][1] == 'O' && matrix[1][1] == 'O' && matrix[2][1] == 'O') {
-        return 'O';
-    }
-    if (matrix[0][2] == 'O' && matrix[1][2] == 'O' && matrix[2][2] == 'O') {
-        return 'O';
-    }
-    if (matrix[0][0] == 'O' && matrix[1][1] == 'O' && matrix[2][2] == 'O') {
-        return 'O';
-    }
-    if (matrix[2][0] == 'O' && matrix[1][1] == 'O' && matrix[2][2] == 'O') {
-        return 'O';
-    }
-    
-    return '/';
-}
 
-int main(int argc, char** argv) {
-    Draw();
+int main() {
+    TicTacToe game;
     while(1) {
-        Input();
-        Draw();
-        if (Win() == 'X') {
-            cout<<"X Wins";
+        cout<<"Enter X : ";
+        cin>>game.Location.first;
+        cout<<"Enter Y : ";
+        cin>>game.Location.second;
+        game.MakeMove(game.p, game.Location.first, game.Location.second);
+        if (victoryFlag == 1) {
             break;
         }
-        if (Win() == 'O') {
-            cout<<"Y Wins";
-            break;
-        }
+        
     }
     return 0;
 }
+
